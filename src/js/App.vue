@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-    <div style="clear: both; width: 500px; height: 50px; border: 1px solid black;" id="selections"></div>
+    <!-- <div style="clear: both; width: 500px; height: 50px; border: 1px solid black;" id="selections"></div> -->
     <img id="NzMap" src="https://i.imgur.com/lsf1Fzc.png" usemap="#Map">
     <map name="Map" id="Map">
     <area shape="poly" coords="42,454,124,454,132,461,129,456,133,453,136,457,141,460,136,464,141,465,142,469,136,469,136,471,129,472,127,474,123,473,131,464,126,461,125,466,42,466" href="#" alt="Stewart Island" name="Stewart Island">
@@ -48,9 +48,70 @@
 <script>
 	export default {
 		name: "App",
+		mounted() {
+		this.$nextTick(function () {
+			var image = $('#NzMap');
+	
+			var locations = ["Northland", "Auckland", "Waikato", "Taupo", "Taranaki", "Whanganui"];
+			
+			
+			image.mapster({
+				fillOpacity: 0.4,
+				fillColor: "ffffff",
+				stroke: true,
+				strokeColor: "3320FF",
+				strokeOpacity: 0.8,
+				strokeWidth: 2,
+				singleSelect: true,
+				mapKey: 'name',
+				listKey: 'name',
+				onClick: function(e) {
+
+				console.log(e.key);
+				document.getElementById(e.key).classList.add("showOff");
+				},
+				showToolTip: true,
+				toolTipClose: ["tooltip-click", "area-click"],
+				/*  areas: [{
+					key: "Northland",
+					fillColor: "ffffff"
+					},
+					{
+					key: "yellowpepper",
+					fillColor: "000000"
+					},
+					{
+					key: "carrots",
+					fillColor: "000000"
+					},
+					{
+					key: "asparagus",
+					strokeColor: "FFFFFF"
+					}
+				] */
+			});
+
+
+		})
+		}
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+	.regionName {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		z-index: 2;
+		display:none;
+	}
+
+	#mapster_wrap_0 {
+	z-index: 999;
+	}
+
+	.showOff {
+	display: block;
+	}
 
 </style>
