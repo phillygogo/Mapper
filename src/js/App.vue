@@ -42,6 +42,15 @@
     <img id="Taupo" class="regionName" src="https://i.imgur.com/hA0Rq8b.png">
     <img id="Taranaki" class="regionName" src="https://i.imgur.com/2uKh4Pv.png">
     <img id="Whanganui" class="regionName" src="https://i.imgur.com/HC0eqpz.png">
+		<img id="Manawatu" class="regionName" src="https://i.imgur.com/nqGFLnx.png">
+		<img id="Wellington" class="regionName" src="https://i.imgur.com/cWMxwtP.png">
+		<img id="Wairarapa" class="regionName" src="https://i.imgur.com/Fc4CFfr.png">
+		<img id="Hawkes Bay" class="regionName" src="https://i.imgur.com/Wh9D7yk.png">
+		<img id="Ruapehu" class="regionName" src="https://i.imgur.com/Y1M1ojD.png">
+		<img id="Rotorua" class="regionName" src="https://i.imgur.com/zi3DGyv.png">
+		<img id="Eastland" class="regionName" src="https://i.imgur.com/r5yYEDi.png">
+		<img id="Bay of Plenty" class="regionName" src="https://i.imgur.com/tW4Hu5f.png">
+		<img id="Coromandel" class="regionName" src="https://i.imgur.com/ersuNKb.png">
 
 		<div class="game-hub">
 			<div id="correct" class="correct">
@@ -74,7 +83,10 @@
 		name: "App",
 		data() {
 			return {
-				locations: ["Northland", "Auckland", "Waikato", "Taupo", "Taranaki", "Whanganui"],
+				locations: [
+					"Northland", "Auckland", "Waikato", "Taupo", "Taranaki", "Whanganui",
+					"Manawatu", "Wellington", "Wairarapa", "Hawkes Bay","Ruapehu", "Rotorua",
+					"Eastland", "Bay of Plenty", "Coromandel"],
 				pickedLoc: "Northland",
 				score: 0,
 				questionNumber: 0,
@@ -83,8 +95,7 @@
 		},
 		computed: {
 			question() {
-				console.log('in here?');
-				console.log(this.pickedLoc);
+				// console.log(this.pickedLoc);
 				return `Where in the world is ${this.pickedLoc}?`
 			},
 			attempts() {
@@ -98,9 +109,17 @@
 			nextQuestion() {
 				this.scorePotential = 3;
 				this.questionNumber++;
-				this.pickedLoc = "Auckland";
+
+				//pick next location
+				this.locations = this.locations.filter(item => item !== this.pickedLoc)
+				this.pickedLoc = this.locations[Math.floor(Math.random() * this.locations.length)];
+
+				//allow clickable map again
+				document.querySelector(".container :first-child").style.zIndex = 89;
+
 				document.getElementById("correct").classList.remove("showOff");
 				document.getElementById("try-again").classList.remove("showOff");
+				document.getElementById("next-question").classList.remove("showOff");
 			}
 		},
 		mounted() {
@@ -109,12 +128,14 @@
 			let $vm = this;
 			var image = $('#NzMap');
 
+			// allowClickable
+
 			image.mapster({
 				fillOpacity: 0.4,
 				fillColor: "ffffff",
 				stroke: true,
 				strokeColor: "3320FF",
-				strokeOpacity: 0.8,
+				strokeOpacity: 0.7,
 				strokeWidth: 2,
 				singleSelect: true,
 				mapKey: 'name',
@@ -124,12 +145,25 @@
 
 					if(e.key == $vm.pickedLoc) {
 						$vm.score += $vm.scorePotential;
+
+						//makes map unclickable until next is clicked:
+						document.querySelector(".container :first-child").style.zIndex = -1;
+
+						//shows and hides game state elements.
 						document.getElementById("correct").classList.add("showOff");
-						document.getElementById("next-question").classList.remove("showOff");
+						document.getElementById("next-question").classList.add("showOff");
 						document.getElementById("try-again").classList.remove("showOff");
 					} else {
 						document.getElementById("try-again").classList.add("showOff");
+						document.getElementById(e.key).classList.remove("showOff");
 						$vm.scorePotential--;
+
+						if($vm.scorePotential == 0) {
+							console.log('in here?');
+							document.querySelector(".container :first-child").style.zIndex = -1;
+							document.getElementById("next-question").classList.add("showOff");
+						}
+
 					}
 				},
 				showToolTip: true,
@@ -166,17 +200,24 @@
 	}
 
 	.container :first-child {
-		z-index: 89;
 		border: grey 1px solid;
 		border-radius: 7px;
 	}
 
-	.block {
-		.container :first-child {
-			z-index: 89;
-			border: grey 1px solid;
-			border-radius: 7px;
-		}
+	// .allowClickable {
+	// 	z-index: 89;
+	// }
+
+	// .block {
+	// 	.container :first-child {
+	// 		z-index: 89;
+	// 		border: grey 1px solid;
+	// 		border-radius: 7px;
+	// 	}
+	// }
+
+	.map#Map {
+		display: none;
 	}
 
 	.regionName {
